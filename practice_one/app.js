@@ -92,7 +92,7 @@ const grid = document.querySelector('.grid');
 const resultDisplay = document.querySelector('#result')
 var cardsChosen = []
 var cardsChosenId = []
-var cardsWon = []
+var cardsWon = new Map()
 
 //check for matches
  function checkForMatch() {
@@ -102,20 +102,22 @@ var cardsWon = []
      if( cardsChosen[0] === cardsChosen[1]){
          cards[optionOneId].setAttribute('src', 'images/white.png')
          cards[optionTwoId].setAttribute('src', 'images/white.png')
-         cards[optionOneId].style.pointerEvents = "none";
-         cards[optionTwoId].style.pointerEvents = "none";
-         cardsWon.push(cardsChosen)   
+         if(!cardsWon.has(cardsChosen)){
+            cardsWon.set(cardsChosen, cardsWon)
+         }   
          //document.querySelector('#exampleModalCenter').modal();
          $('#exampleModalCenter').modal()
     }else{
         cards[optionOneId].setAttribute('src', 'images/blank.png')
          cards[optionTwoId].setAttribute('src', 'images/blank.png')
+         cards[optionOneId].style.pointerEvents = "auto";
+         cards[optionTwoId].style.pointerEvents = "auto";
          //alert('sorry try again')
     }
     cardsChosen = []
     cardsChosenId = []
     resultDisplay.textContent = cardsWon.length
-    if(cardsWon.length === cardArray.length/2){
+    if(cardsWon.size === cardArray.length/2){
         resultDisplay.textContent = 'Congratulations! You found them all'
         $('#championModalCenter').modal()
     }
@@ -138,11 +140,10 @@ function createBoard(){
 function flipCard(e){
     //console.log('e: ', e)
     var cardId = this.getAttribute('data-id')
-    console.log('cardId: ', cardId)
-    console.log('name: ', cardArray[cardId].name)
     cardsChosen.push(cardArray[cardId].name)
     cardsChosenId.push(cardId)
     this.setAttribute('src', cardArray[cardId].img)
+   this.style.pointerEvents = "none";
     if(cardsChosen.length === 2 ){
         setTimeout(checkForMatch, 500)
     }
